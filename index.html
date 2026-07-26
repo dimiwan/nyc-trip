@@ -375,7 +375,10 @@ function renderTabbar(){
   </div>`;
 }
 
-function render(){
+function render(keepScroll){
+  const prevScreen = app.querySelector('.screen');
+  const scrollY = (keepScroll && prevScreen) ? prevScreen.scrollTop : 0;
+
   let inner = '';
   if(currentScreen === 'home') inner = renderHome();
   else if(currentScreen === 'day') inner = renderDay(currentDay);
@@ -384,6 +387,11 @@ function render(){
 
   app.innerHTML = `<div class="screen active">${inner}</div>` + renderTabbar();
   attachHandlers();
+
+  if(keepScroll){
+    const newScreen = app.querySelector('.screen');
+    if(newScreen) newScreen.scrollTop = scrollY;
+  }
 }
 
 function attachHandlers(){
@@ -410,7 +418,7 @@ function attachHandlers(){
       const key = el.getAttribute('data-checkbox');
       checked[key] = !checked[key];
       saveChecked();
-      render();
+      render(true);
     });
   });
 
