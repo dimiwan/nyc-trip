@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NYC Trip">
+<title>Voyage à New York 2026</title>
+<style>
+:root{
+  --bg:#0d0d0d;
+  --surface:#1a1a1a;
+  --surface2:#232323;
+  --text:#f5f5f0;
+  --text-dim:#9a9a94;
+  --line:#2c2c2c;
+  --accent:#EE352E;
+  --free:#00933C;
+  --free-bg:#0e2418;
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;background:#0d0d0d;color:#f5f5f0;
+  font-family:-apple-system,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  overflow:hidden;}
+#app{position:fixed;inset:0;display:flex;flex-direction:column;}
+
+/* ===== Screens ===== */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;
+  -webkit-overflow-scrolling:touch; padding-bottom: calc(74px + var(--safe-bottom));}
+.screen.active{display:flex;}
+
+/* ===== Top bar ===== */
+.topbar{padding:calc(14px + var(--safe-top)) 18px 12px; display:flex; align-items:center; gap:10px;
+  background:#0d0d0d; position:sticky; top:0; z-index:5; border-bottom:1px solid #2c2c2c;}
+.topbar .backbtn{width:34px;height:34px;border-radius:50%;background:#1a1a1a;
+  display:flex;align-items:center;justify-content:center;font-size:18px;color:#f5f5f0;
+  flex-shrink:0; border:none;}
+.topbar h1{font-size:17px; font-weight:800; letter-spacing:0.3px; margin:0; flex:1;
+  text-transform:uppercase;}
+.topbar .bullet{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center; font-weight:800; font-size:14px; color:#fff; flex-shrink:0;}
+
+/* ===== HOME SCREEN ===== */
+.hero{padding: calc(28px + var(--safe-top)) 20px 20px; text-align:center;
+  background: radial-gradient(circle at 50% 0%, #1c1224 0%, #0d0d0d 70%);
+  border-bottom:4px solid #2c2c2c;}
+.hero .eyebrow{font-size:11px; letter-spacing:3px; color:#9a9a94; text-transform:uppercase; font-weight:700;}
+.hero h1{font-size:26px; font-weight:800; margin:8px 0 4px; letter-spacing:0.5px; line-height:1.15; color:#f5f5f0;}
+.hero .sub{font-size:13px; color:#9a9a94;}
+.hero .stats{display:flex; justify-content:center; gap:10px; margin-top:16px; flex-wrap:wrap;}
+.stat{background:#1a1a1a; border-radius:10px; padding:8px 12px; font-size:11px; color:#9a9a94;}
+.stat b{display:block; font-size:16px; color:#f5f5f0; font-weight:800;}
+
+.linemap{padding:18px 0 10px;}
+.linemap .maptitle{padding:0 20px 12px; font-size:12px; letter-spacing:2px; color:#9a9a94;
+  text-transform:uppercase; font-weight:700;}
+.dayrow{display:flex; align-items:center; gap:14px; padding:13px 20px; position:relative;}
+.dayrow:active{background:#1a1a1a;}
+.dayrow .track{position:relative; width:34px; display:flex; justify-content:center; flex-shrink:0;}
+.dayrow .track::before{content:''; position:absolute; top:-13px; bottom:-13px; width:4px; background:var(--dot-color, #333); z-index:0;}
+.dayrow:first-child .track::before{top:50%;}
+.dayrow:last-child .track::before{bottom:50%;}
+.dayrow .dot{position:relative; z-index:1; width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center; font-weight:800; font-size:13px; color:#fff;
+  border:3px solid #0d0d0d;}
+.dayrow .info{flex:1; min-width:0;}
+.dayrow .info .d1{font-size:11px; color:#9a9a94; text-transform:uppercase; letter-spacing:1px; font-weight:600;}
+.dayrow .info .d2{font-size:15.5px; font-weight:700; margin-top:1px; color:#f5f5f0;}
+.dayrow .chev{color:#9a9a94; font-size:16px;}
+.dayrow .progress{font-size:10.5px; color:#9a9a94; margin-top:2px;}
+
+/* ===== DAY SCREEN ===== */
+.daymeta{padding:16px 18px 14px; border-bottom:3px solid #2c2c2c;}
+.daymeta .d1{font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:#9a9a94; font-weight:700;}
+.daymeta .d2{font-size:21px; font-weight:800; margin-top:2px;}
+.quote{margin:14px 18px; padding:14px 16px; background:#1a1a1a; border-left:4px solid var(--dot-color,#666);
+  border-radius:0 10px 10px 0; font-size:13.5px; font-style:italic; color:#d8d8d2; line-height:1.5;}
+.quote .auth{display:block; margin-top:8px; font-style:normal; font-weight:700; font-size:12px; color:#9a9a94;}
+.daynote{margin:0 18px 14px; padding:10px 14px; background:#241c0c; border-radius:10px; font-size:12.5px;
+  font-style:italic; color:#e0c98a;}
+
+.timeline{padding:6px 18px 30px;}
+.trow{display:flex; gap:12px; position:relative;}
+.trow .rail{width:26px; display:flex; flex-direction:column; align-items:center; flex-shrink:0;}
+.trow .rail .seg{width:4px; flex:1; background:var(--dot-color,#333);}
+.trow .rail .node{width:16px;height:16px;border-radius:50%; background:var(--dot-color,#333); flex-shrink:0;
+  border:3px solid #0d0d0d; margin: 2px 0;}
+.trow.done .rail .node{background:#3a3a3a;}
+.trow .content{flex:1; min-width:0; padding: 0 0 18px;}
+.card{background:#1a1a1a; border-radius:14px; padding:13px 14px; position:relative;}
+.card.end{background:#232323; border:none; border-left: 5px solid #555; padding:12px 14px;}
+.card.end .act{color:#f5f5f0;}
+.card.done{opacity:0.45;}
+.card .ctop{display:flex; justify-content:space-between; align-items:baseline; gap:8px;}
+.card .cardicon{font-size:16px; margin-right:2px;}
+.card .time{font-weight:800; font-size:15px; color:var(--dot-color,#fff); margin-right:auto;}
+.card .dur{font-size:11.5px; color:#9a9a94; white-space:nowrap;}
+.card .act{font-size:15px; font-weight:600; margin-top:4px; line-height:1.35;}
+.card .act a{color:inherit;}
+.card .act b{color:var(--dot-color,#fff);}
+.card .brow{display:flex; align-items:center; justify-content:space-between; margin-top:9px; gap:8px;}
+.card .cardactions{display:flex; align-items:center; gap:8px; margin-left:auto;}
+.card .infolink{font-size:11px; color:#5b9dff; text-decoration:none; font-weight:700; white-space:nowrap;}
+.card .price{font-size:11.5px; background:#2a2020; color:#e6a5a0; padding:3px 9px; border-radius:8px; font-weight:700;}
+.card .price.free{background:#0e2418; color:#4fd88a;}
+.card .cb{width:26px;height:26px;border-radius:50%; border:2px solid #444; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:14px; color:transparent;}
+.card.done .cb{background:#3a3a3a; border-color:#3a3a3a; color:#8a8a8a;}
+.connector{display:flex; align-items:center; gap:8px; padding:6px 0 6px 2px; font-size:12.5px; color:#9a9a94;}
+.connector .ic{font-size:13px;}
+.connector .maplink{margin-left:auto; color:#5b9dff; font-weight:700; font-size:12px; text-decoration:none; padding:4px 4px;}
+
+/* ===== BUDGET SCREEN ===== */
+.budgetcard{margin:16px 18px; background:#1a1a1a; border-radius:16px; padding:18px;}
+.resgroup{margin:16px 18px;}
+.resgrouptitle{font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; padding:8px 0; margin-bottom:6px;}
+.resgrouptitle.mandatory{color:#ff6b6b;}
+.resgrouptitle.recommended{color:#ffd54f;}
+.rescard{background:#1a1a1a; border-radius:14px; padding:14px; margin-bottom:10px; border-left:4px solid #444;}
+.resgrouptitle.mandatory ~ .rescard{border-left-color:#ff6b6b;}
+.resname{font-weight:800; font-size:16px; color:#f5f5f0;}
+.resday{font-size:12.5px; color:#9a9a94; margin-top:2px; font-weight:600;}
+.resdetail{font-size:13.5px; color:#d8d8d2; margin-top:8px; line-height:1.5;}
+.reslinks{margin-top:10px; display:flex; flex-wrap:wrap; gap:10px;}
+.reslinks a{color:#5b9dff; text-decoration:none; font-size:13px; font-weight:700; background:#232323; padding:6px 12px; border-radius:8px;}
+.budgetcard h2{margin:0 0 14px; font-size:15px; text-transform:uppercase; letter-spacing:1.5px;}
+.brow2{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #2c2c2c; font-size:14px;}
+.brow2 b{font-weight:800;}
+.brow2.total{border-bottom:none; padding-top:14px; font-size:17px;}
+.brow2.total span:first-child, .brow2.total b{color:#ffd54f;}
+.budgetnote{margin:0 18px; font-size:11.5px; color:#9a9a94; font-style:italic; line-height:1.5;}
+.warnbox{margin:14px 18px; padding:12px 14px; background:#241c0c; border-radius:10px; font-size:12px; color:#e0c98a; line-height:1.5;}
+
+/* ===== Bottom nav ===== */
+.tabbar{position:fixed; left:0; right:0; bottom:0; display:flex; background:rgba(20,20,20,0.92);
+  backdrop-filter:blur(20px); border-top:1px solid #2c2c2c; padding-bottom:var(--safe-bottom); z-index:10;}
+.tab{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  padding:9px 0 7px; color:#9a9a94; font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;}
+.tab.active{color:#fff;}
+.tab .ti{font-size:19px;}
+
+.installtip{margin:14px 18px 0; padding:12px 14px; background:#1a1a1a; border-radius:12px; font-size:12px; color:#9a9a94; line-height:1.6; display:flex; gap:10px; align-items:flex-start;}
+.installtip .x{margin-left:auto; color:#9a9a94; font-size:16px; flex-shrink:0;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script id="daydata" type="application/json">[{"id": 0, "dayNumber": "1", "dateLabel": "Mercredi 29 juillet", "nameLabel": "Arriv\u00e9e", "notes": [], "color": "#EE352E", "quote": {"text": "Do what you can, with what you have, where you are.", "author": "Theodore Roosevelt"}, "stops": [{"type": "stop", "time": "21h00", "activity": "Arriv\u00e9e \u00e0 New York", "duration": null, "price": "Gratuit", "isEnd": false, "link": null, "icon": "\ud83d\udeec", "info": null}, {"type": "stop", "time": "\u2014", "activity": "Installation \u00e0 Boerum Hill", "duration": null, "price": "Gratuit", "isEnd": false, "link": null, "icon": "\ud83d\udeec", "info": null}, {"type": "stop", "time": "Soir", "activity": "D\u00eener \u2014 <b>Junior's Restaurant</b> (386 Flatbush Ave Ext, ouvert jusqu'\u00e0 23h, \u00e0 emporter possible)", "duration": "45 min", "price": "~100$ (~20$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=386+Flatbush+Ave+Ext%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://en.wikipedia.org/wiki/Junior%27s_Restaurant"}]}, {"id": 1, "dayNumber": "2", "dateLabel": "Jeudi 30 juillet", "nameLabel": "Midtown Landmarks (journ\u00e9e calme)", "notes": [], "color": "#FF6319", "quote": {"text": "I do not think that there is any other quality so essential to success as the quality of perseverance.", "author": "John D. Rockefeller"}, "stops": [{"type": "connector", "label": "25 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=Grand+Central+Terminal%2C+New+York%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "9h25", "activity": "Grand Central Terminal", "duration": "25 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Grand+Central+Terminal%2C+New+York%2C+NY&destination=Chrysler+Building%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\ude89", "info": "https://en.wikipedia.org/wiki/Grand_Central_Terminal"}, {"type": "connector", "label": "3 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Grand+Central+Terminal%2C+New+York%2C+NY&destination=Chrysler+Building%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "9h53", "activity": "Chrysler Building (ext\u00e9rieur)", "duration": "10 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Chrysler+Building%2C+New+York%2C+NY&destination=New+York+Public+Library%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udfd9\ufe0f", "info": "https://en.wikipedia.org/wiki/Chrysler_Building"}, {"type": "connector", "label": "10 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Chrysler+Building%2C+New+York%2C+NY&destination=New+York+Public+Library%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "10h13", "activity": "New York Public Library", "duration": "35 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=New+York+Public+Library%2C+New+York%2C+NY&destination=Bryant+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\udcda", "info": "https://en.wikipedia.org/wiki/New_York_Public_Library_Main_Branch"}, {"type": "connector", "label": "1 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=New+York+Public+Library%2C+New+York%2C+NY&destination=Bryant+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "10h49", "activity": "Bryant Park", "duration": "20 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Bryant+Park%2C+New+York%2C+NY&destination=St.+Patrick%27s+Cathedral%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf33", "info": "https://en.wikipedia.org/wiki/Bryant_Park"}, {"type": "connector", "label": "12 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Bryant+Park%2C+New+York%2C+NY&destination=St.+Patrick%27s+Cathedral%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "11h21", "activity": "Cath\u00e9drale Saint-Patrick", "duration": "25 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=St.+Patrick%27s+Cathedral%2C+New+York%2C+NY&destination=Rockefeller+Center%2C+New+York%2C+NY&travelmode=walking", "icon": "\u26ea", "info": "https://en.wikipedia.org/wiki/St._Patrick%27s_Cathedral_(Manhattan)"}, {"type": "connector", "label": "2 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=St.+Patrick%27s+Cathedral%2C+New+York%2C+NY&destination=Rockefeller+Center%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "11h48", "activity": "Rockefeller Center (ext\u00e9rieur)", "duration": "25 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Rockefeller+Center%2C+New+York%2C+NY&destination=30+Rockefeller+Plaza%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udfd9\ufe0f", "info": "https://en.wikipedia.org/wiki/Rockefeller_Center"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Rockefeller+Center%2C+New+York%2C+NY&destination=30+Rockefeller+Plaza%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "12h18", "activity": "D\u00e9jeuner \u2014 <b>Shake Shack Rockefeller Center</b> (30 Rockefeller Plaza)", "duration": "1h15", "price": "~85$ (~17$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=30+Rockefeller+Plaza%2C+New+York%2C+NY&destination=611+Fifth+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://en.wikipedia.org/wiki/Rockefeller_Center"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=30+Rockefeller+Plaza%2C+New+York%2C+NY&destination=611+Fifth+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "13h38", "activity": "Saks Fifth Avenue <i>(611 Fifth Ave)</i>", "duration": "25 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=611+Fifth+Ave%2C+New+York%2C+NY&destination=727+Fifth+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\udecd\ufe0f", "info": "https://en.wikipedia.org/wiki/Saks_Fifth_Avenue"}, {"type": "connector", "label": "8 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=611+Fifth+Ave%2C+New+York%2C+NY&destination=727+Fifth+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "14h11", "activity": "Tiffany & Co. <i>(727 Fifth Ave)</i>", "duration": "20 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=727+Fifth+Ave%2C+New+York%2C+NY&destination=754+Fifth+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\udecd\ufe0f", "info": "https://en.wikipedia.org/wiki/Tiffany_%26_Co."}, {"type": "connector", "label": "2 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=727+Fifth+Ave%2C+New+York%2C+NY&destination=754+Fifth+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "14h33", "activity": "Bergdorf Goodman <i>(754 Fifth Ave)</i>", "duration": "20 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=754+Fifth+Ave%2C+New+York%2C+NY&destination=767+Fifth+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\udecd\ufe0f", "info": "https://en.wikipedia.org/wiki/Bergdorf_Goodman"}, {"type": "connector", "label": "2 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=754+Fifth+Ave%2C+New+York%2C+NY&destination=767+Fifth+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "14h55", "activity": "Apple Store Fifth Avenue <i>(767 Fifth Ave)</i>", "duration": "20 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=767+Fifth+Ave%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83c\udfd9\ufe0f", "info": "https://en.wikipedia.org/wiki/Apple_Fifth_Avenue"}, {"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=767+Fifth+Ave%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "15h45", "activity": "<b>Retour \u00e0 Brooklyn</b>", "duration": null, "price": "Gratuit", "isEnd": true, "link": null, "icon": "\ud83d\ude87", "info": null}]}, {"id": 2, "dayNumber": "3", "dateLabel": "Vendredi 31 juillet", "nameLabel": "Financial District & Statue de la Libert\u00e9 (vue depuis le ferry)", "notes": ["Le ferry passe \u00e0 proximit\u00e9 de la Statue de la Libert\u00e9 sans d\u00e9barquer (pas de mus\u00e9e, pas de gros plan) \u2014 journ\u00e9e qui se termine t\u00f4t en d\u00e9but d'apr\u00e8s-midi, avec une sortie en soir\u00e9e \u00e0 la Morgan Library (gratuite le vendredi)."], "color": "#0039A6", "quote": {"text": "The only thing we have to fear is fear itself.", "author": "Franklin D. Roosevelt"}, "stops": [{"type": "connector", "label": "25 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=Oculus%2C+New+York%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "9h25", "activity": "Oculus World Trade Center", "duration": "25 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Oculus%2C+New+York%2C+NY&destination=National+September+11+Memorial%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\ude89", "info": "https://en.wikipedia.org/wiki/World_Trade_Center_Transportation_Hub"}, {"type": "connector", "label": "3 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Oculus%2C+New+York%2C+NY&destination=National+September+11+Memorial%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "9h53", "activity": "M\u00e9morial du 11 Septembre", "duration": "40 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=National+September+11+Memorial%2C+New+York%2C+NY&destination=26+Wall+Street%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\udd6f\ufe0f", "info": "https://en.wikipedia.org/wiki/National_September_11_Memorial_%26_Museum"}, {"type": "connector", "label": "12 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=National+September+11+Memorial%2C+New+York%2C+NY&destination=26+Wall+Street%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "10h45", "activity": "Wall Street <i>(26 Wall Street \u2014 NYSE / Federal Hall)</i>", "duration": "15 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=26+Wall+Street%2C+New+York%2C+NY&destination=Charging+Bull%2C+Bowling+Green%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\udc02", "info": "https://en.wikipedia.org/wiki/Wall_Street"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=26+Wall+Street%2C+New+York%2C+NY&destination=Charging+Bull%2C+Bowling+Green%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "11h05", "activity": "Charging Bull <i>(Bowling Green)</i>", "duration": "10 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Charging+Bull%2C+Bowling+Green%2C+New+York%2C+NY&destination=Battery+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\udc02", "info": "https://en.wikipedia.org/wiki/Charging_Bull"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Charging+Bull%2C+Bowling+Green%2C+New+York%2C+NY&destination=Battery+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "11h20", "activity": "Battery Park", "duration": "15 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Battery+Park%2C+New+York%2C+NY&destination=215+Murray+St%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf0a", "info": "https://en.wikipedia.org/wiki/Battery_Park"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Battery+Park%2C+New+York%2C+NY&destination=215+Murray+St%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "11h40", "activity": "D\u00e9jeuner \u2014 <b>Shake Shack Battery Park City</b> (215 Murray St)", "duration": "45 min", "price": "~85$ (~17$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=215+Murray+St%2C+New+York%2C+NY&destination=Whitehall+Terminal%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://www.shakeshack.com"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=215+Murray+St%2C+New+York%2C+NY&destination=Whitehall+Terminal%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "12h30", "activity": "<b>Staten Island Ferry</b> <i>(aller-retour gratuit, vue sur la Statue de la Libert\u00e9 depuis le bateau)</i>", "duration": "1h", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Whitehall+Terminal%2C+New+York%2C+NY&destination=Battery+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\uddfd", "info": "https://en.wikipedia.org/wiki/Staten_Island_Ferry"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Whitehall+Terminal%2C+New+York%2C+NY&destination=Battery+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "13h35", "activity": "Retour \u00e0 Battery Park", "duration": null, "price": "\u2014", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Battery+Park%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83c\udf0a", "info": "https://en.wikipedia.org/wiki/Battery_Park"}, {"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Battery+Park%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "14h05", "activity": "<b>Retour \u00e0 Brooklyn</b>", "duration": null, "price": "Gratuit", "isEnd": true, "link": null, "icon": "\ud83d\ude87", "info": null}, {"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=225+Madison+Ave%2C+New+York%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "17h00", "activity": "<b>Morgan Library</b> <i>(gratuit le vendredi 17h-20h, r\u00e9servation en ligne recommand\u00e9e)</i>", "duration": "1h30", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=225+Madison+Ave%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83d\uddbc\ufe0f", "info": "https://en.wikipedia.org/wiki/Morgan_Library_%26_Museum"}, {"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=225+Madison+Ave%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "19h00", "activity": "<b>Retour \u00e0 Brooklyn</b>", "duration": null, "price": "Gratuit", "isEnd": true, "link": null, "icon": "\ud83d\ude87", "info": null}]}, {"id": 3, "dayNumber": "4", "dateLabel": "Samedi 1er ao\u00fbt", "nameLabel": "West Village, SoHo & Chelsea", "notes": [], "color": "#6CBE45", "quote": {"text": "In the future, everyone will be world-famous for 15 minutes.", "author": "Andy Warhol"}, "stops": [{"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=90+Bedford+St%2C+New+York%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "9h30", "activity": "Friends Building + Grove Street", "duration": "30 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=90+Bedford+St%2C+New+York%2C+NY&destination=Washington+Square+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udfac", "info": "https://en.wikipedia.org/wiki/Friends"}, {"type": "connector", "label": "8 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=90+Bedford+St%2C+New+York%2C+NY&destination=Washington+Square+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "10h08", "activity": "Washington Square Park", "duration": "25 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Washington+Square+Park%2C+New+York%2C+NY&destination=SoHo%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf33", "info": "https://en.wikipedia.org/wiki/Washington_Square_Park"}, {"type": "connector", "label": "12 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Washington+Square+Park%2C+New+York%2C+NY&destination=SoHo%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "10h45", "activity": "SoHo", "duration": "1h30", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=SoHo%2C+New+York%2C+NY&destination=7+Carmine+St%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udfac", "info": "https://en.wikipedia.org/wiki/SoHo,_Manhattan"}, {"type": "connector", "label": "10 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=SoHo%2C+New+York%2C+NY&destination=7+Carmine+St%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "12h25", "activity": "Joe's Pizza (d\u00e9jeuner) \u2014 <b>7 Carmine Street</b>", "duration": "30 min", "price": "~40$ (~8$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=7+Carmine+St%2C+New+York%2C+NY&destination=75+9th+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://joespizzanyc.com"}, {"type": "connector", "label": "20 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=7+Carmine+St%2C+New+York%2C+NY&destination=75+9th+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "13h15", "activity": "Chelsea Market", "duration": "45 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=75+9th+Ave%2C+New+York%2C+NY&destination=High+Line%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83e\udd56", "info": "https://en.wikipedia.org/wiki/Chelsea_Market"}, {"type": "connector", "label": "2 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=75+9th+Ave%2C+New+York%2C+NY&destination=High+Line%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "14h02", "activity": "High Line", "duration": "1h30", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=High+Line%2C+New+York%2C+NY&destination=Little+Island%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf3f", "info": "https://en.wikipedia.org/wiki/High_Line"}, {"type": "connector", "label": "10 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=High+Line%2C+New+York%2C+NY&destination=Little+Island%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "15h42", "activity": "Little Island", "duration": "1h", "price": "Gratuit", "isEnd": false, "link": null, "icon": "\ud83c\udfdd\ufe0f", "info": "https://en.wikipedia.org/wiki/Little_Island_(New_York_City)"}, {"type": "stop", "time": "16h42", "activity": "Temps libre / d\u00eener l\u00e9ger", "duration": "~3h", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Little+Island%2C+New+York%2C+NY&destination=Pier+45%2C+Hudson+River+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": null}, {"type": "connector", "label": "8 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Little+Island%2C+New+York%2C+NY&destination=Pier+45%2C+Hudson+River+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "19h50", "activity": "Coucher de soleil sur l'Hudson <i>(Pier 45, Hudson River Park)</i>", "duration": "20 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Pier+45%2C+Hudson+River+Park%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83c\udf07", "info": null}, {"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Pier+45%2C+Hudson+River+Park%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "20h40", "activity": "<b>Retour \u00e0 Brooklyn</b>", "duration": null, "price": "Gratuit", "isEnd": true, "link": null, "icon": "\ud83d\ude87", "info": null}]}, {"id": 4, "dayNumber": "5", "dateLabel": "Dimanche 2 ao\u00fbt", "nameLabel": "Central Park & Metropolitan Museum", "notes": [], "color": "#00933C", "quote": {"text": "You're only given a little spark of madness. You mustn't lose it.", "author": "Robin Williams"}, "stops": [{"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=Columbus+Circle%2C+New+York%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "9h30", "activity": "Central Park : Strawberry Fields, Bethesda Terrace, Bow Bridge", "duration": "2h", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Bow+Bridge%2C+Central+Park%2C+New+York%2C+NY&destination=1226+Lexington+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf33", "info": "https://en.wikipedia.org/wiki/Strawberry_Fields_(memorial)"}, {"type": "connector", "label": "25 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Bow+Bridge%2C+Central+Park%2C+New+York%2C+NY&destination=1226+Lexington+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "11h55", "activity": "D\u00e9jeuner \u2014 <b>Lexington Candy Shop</b> (1226 Lexington Ave)", "duration": "1h", "price": "~80$ (~16$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=1226+Lexington+Ave%2C+New+York%2C+NY&destination=Metropolitan+Museum+of+Art%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://www.lexingtoncandyshop.com"}, {"type": "connector", "label": "8 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=1226+Lexington+Ave%2C+New+York%2C+NY&destination=Metropolitan+Museum+of+Art%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "13h03", "activity": "Metropolitan Museum of Art", "duration": "3h", "price": "150$ (30$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Metropolitan+Museum+of+Art%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83d\ude87", "info": "https://en.wikipedia.org/wiki/Metropolitan_Museum_of_Art"}, {"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Metropolitan+Museum+of+Art%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "16h33", "activity": "<b>Retour \u00e0 Brooklyn</b>", "duration": null, "price": "Gratuit", "isEnd": true, "link": null, "icon": "\ud83d\ude87", "info": null}]}, {"id": 5, "dayNumber": "6", "dateLabel": "Lundi 3 ao\u00fbt", "nameLabel": "Brooklyn (journ\u00e9e locale)", "notes": [], "color": "#996633", "quote": {"text": "Do the right thing.", "author": "Spike Lee"}, "stops": [{"type": "connector", "label": "20 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=186+Underhill+Ave%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "9h05", "activity": "Radio Bakery <i>(186 Underhill Ave)</i>", "duration": "40 min", "price": "~50$ (~10$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=186+Underhill+Ave%2C+Brooklyn%2C+NY&destination=Brooklyn+Museum%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://www.instagram.com/radiobakery"}, {"type": "connector", "label": "8 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=186+Underhill+Ave%2C+Brooklyn%2C+NY&destination=Brooklyn+Museum%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "9h53", "activity": "Brooklyn Museum <i>(si envie, \u00e0 8 min \u00e0 pied)</i>", "duration": "1h30", "price": "~100$ sugg\u00e9r\u00e9 (20$/pers., pay-what-you-wish, facultatif)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Brooklyn+Museum%2C+Brooklyn%2C+NY&destination=657+Washington+Ave%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "\ud83d\uddbc\ufe0f", "info": "https://en.wikipedia.org/wiki/Brooklyn_Museum"}, {"type": "connector", "label": "10 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Brooklyn+Museum%2C+Brooklyn%2C+NY&destination=657+Washington+Ave%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "11h33", "activity": "D\u00e9jeuner \u2014 <b>Little Egg</b> (657 Washington Avenue)", "duration": "1h", "price": "~90$ (~18$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=657+Washington+Ave%2C+Brooklyn%2C+NY&destination=Prospect+Park%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://littleeggbk.com"}, {"type": "connector", "label": "15 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=657+Washington+Ave%2C+Brooklyn%2C+NY&destination=Prospect+Park%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "12h48", "activity": "Prospect Park", "duration": "1h30", "price": "Gratuit", "isEnd": false, "link": null, "icon": "\ud83c\udf33", "info": "https://en.wikipedia.org/wiki/Prospect_Park_(Brooklyn)"}, {"type": "stop", "time": "14h18", "activity": "Temps libre (dans le parc ou aux alentours)", "duration": "~4h", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Prospect+Park%2C+Brooklyn%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83d\udeb6", "info": null}, {"type": "connector", "label": "20 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Prospect+Park%2C+Brooklyn%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "18h40", "activity": "<b>Retour \u00e0 Boerum Hill</b>", "duration": null, "price": "Gratuit", "isEnd": true, "link": null, "icon": "\ud83d\udccd", "info": null}, {"type": "stop", "time": "19h00", "activity": "Rooftop en soir\u00e9e \u2014 <b>Harriet's Rooftop</b> (60 Furman St, 1 Hotel Brooklyn Bridge)", "duration": null, "price": "Pas d'entr\u00e9e \u2014 boissons/minimum en sus", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=60+Furman+St%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83c\udf78", "info": "https://www.1hotels.com/brooklyn-bridge/dining/harriets"}]}, {"id": 6, "dayNumber": "7", "dateLabel": "Mardi 4 ao\u00fbt", "nameLabel": "Top of the Rock, Times Square & shopping l\u00e9ger", "notes": [], "color": "#FCCC0A", "quote": {"text": "I like thinking big. If you're going to be thinking anything, you might as well think big.", "author": "Donald Trump"}, "stops": [{"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=151+W+34th+St%2C+New+York%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "9h30", "activity": "Macy's", "duration": "1h", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=151+W+34th+St%2C+New+York%2C+NY&destination=1333+Broadway%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\udecd\ufe0f", "info": "https://en.wikipedia.org/wiki/Macy%27s_Herald_Square"}, {"type": "connector", "label": "10 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=151+W+34th+St%2C+New+York%2C+NY&destination=1333+Broadway%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "10h40", "activity": "D\u00e9jeuner \u2014 <b>Shake Shack Herald Square</b> (1333 Broadway)", "duration": "1h", "price": "~85$ (~17$/pers.)", "isEnd": false, "link": null, "icon": "\ud83c\udf7d\ufe0f", "info": "https://www.shakeshack.com"}, {"type": "stop", "time": "11h40", "activity": "Temps libre (caf\u00e9, boutiques, repos)", "duration": "~6h35", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=1333+Broadway%2C+New+York%2C+NY&destination=30+Rockefeller+Plaza%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\udeb6", "info": null}, {"type": "connector", "label": "15 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=1333+Broadway%2C+New+York%2C+NY&destination=30+Rockefeller+Plaza%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "18h30", "activity": "Top of the Rock (billet horodat\u00e9, file + coucher de soleil ~19h55)", "duration": "1h30", "price": "~275$ (~55$/pers., cr\u00e9neau coucher de soleil)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=30+Rockefeller+Plaza%2C+New+York%2C+NY&destination=Times+Square%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udfd9\ufe0f", "info": "https://en.wikipedia.org/wiki/Top_of_the_Rock"}, {"type": "connector", "label": "10 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=30+Rockefeller+Plaza%2C+New+York%2C+NY&destination=Times+Square%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "20h10", "activity": "Times Square", "duration": "30 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Times+Square%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83c\udf03", "info": "https://en.wikipedia.org/wiki/Times_Square"}, {"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Times+Square%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "21h10", "activity": "<b>Retour \u00e0 Brooklyn</b>", "duration": null, "price": "Gratuit", "isEnd": true, "link": null, "icon": "\ud83d\ude87", "info": null}]}, {"id": 7, "dayNumber": "8", "dateLabel": "Mercredi 5 ao\u00fbt", "nameLabel": "MoMA & Madison Avenue (ex-journ\u00e9e libre)", "notes": [], "color": "#B933AD", "quote": {"text": "I don't design clothes, I design dreams.", "author": "Ralph Lauren"}, "stops": [{"type": "connector", "label": "25 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=11+W+53rd+St%2C+New+York%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "9h25", "activity": "MoMA", "duration": "3h", "price": "150$ (30$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=11+W+53rd+St%2C+New+York%2C+NY&destination=W+53rd+St+%26+6th+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\uddbc\ufe0f", "info": "https://en.wikipedia.org/wiki/Museum_of_Modern_Art"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=11+W+53rd+St%2C+New+York%2C+NY&destination=W+53rd+St+%26+6th+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "12h30", "activity": "D\u00e9jeuner \u2014 <b>The Halal Guys</b> (angle W 53rd St & 6th Ave)", "duration": "1h", "price": "~65$ (~13$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=W+53rd+St+%26+6th+Ave%2C+New+York%2C+NY&destination=Madison+Ave+%26+E+57th+St%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://en.wikipedia.org/wiki/The_Halal_Guys"}, {"type": "connector", "label": "15 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=W+53rd+St+%26+6th+Ave%2C+New+York%2C+NY&destination=Madison+Ave+%26+E+57th+St%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "13h45", "activity": "Madison Avenue (shopping)", "duration": "1h15", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Madison+Ave+%26+E+57th+St%2C+New+York%2C+NY&destination=Solomon+R.+Guggenheim+Museum%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\udecd\ufe0f", "info": "https://en.wikipedia.org/wiki/Madison_Avenue"}, {"type": "stop", "time": "15h00", "activity": "Apr\u00e8s-midi libre : Guggenheim (15-20 min \u00e0 pied depuis Madison Ave)", "duration": null, "price": "150$ (30$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Solomon+R.+Guggenheim+Museum%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83d\uddbc\ufe0f", "info": "https://en.wikipedia.org/wiki/Solomon_R._Guggenheim_Museum"}]}, {"id": 8, "dayNumber": "9", "dateLabel": "Jeudi 6 ao\u00fbt", "nameLabel": "Upper West Side : American Museum of Natural History", "notes": ["Le mus\u00e9e est immense (dinosaures, plan\u00e9tarium Hayden, salle des oc\u00e9ans) \u2014 3h est un minimum, pr\u00e9voir plus si passion pour les sciences naturelles."], "color": "#00ADD0", "quote": {"text": "The universe is under no obligation to make sense to you.", "author": "Neil deGrasse Tyson"}, "stops": [{"type": "connector", "label": "25 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=American+Museum+of+Natural+History%2C+New+York%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "9h25", "activity": "American Museum of Natural History", "duration": "3h", "price": "~170$ (~34$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=American+Museum+of+Natural+History%2C+New+York%2C+NY&destination=366+Columbus+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83d\uddbc\ufe0f", "info": "https://en.wikipedia.org/wiki/American_Museum_of_Natural_History"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=American+Museum+of+Natural+History%2C+New+York%2C+NY&destination=366+Columbus+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "12h30", "activity": "D\u00e9jeuner \u2014 <b>Shake Shack Upper West Side</b> (366 Columbus Ave)", "duration": "1h", "price": "~85$ (~17$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=366+Columbus+Ave%2C+New+York%2C+NY&destination=Lincoln+Center%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://www.shakeshack.com"}, {"type": "connector", "label": "10 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=366+Columbus+Ave%2C+New+York%2C+NY&destination=Lincoln+Center%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "13h40", "activity": "Lincoln Center (ext\u00e9rieur, place et fontaine)", "duration": "30 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Lincoln+Center%2C+New+York%2C+NY&destination=Riverside+Park%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udfbb", "info": "https://en.wikipedia.org/wiki/Lincoln_Center"}, {"type": "stop", "time": "14h10", "activity": "Temps libre : Riverside Park ou balade Central Park West", "duration": "~2h", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Riverside+Park%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83c\udf33", "info": "https://en.wikipedia.org/wiki/Central_Park"}, {"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Riverside+Park%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "16h40", "activity": "<b>Retour \u00e0 Brooklyn</b>", "duration": null, "price": "Gratuit", "isEnd": true, "link": null, "icon": "\ud83d\ude87", "info": null}]}, {"id": 9, "dayNumber": "10", "dateLabel": "Vendredi 7 ao\u00fbt", "nameLabel": "Derni\u00e8re journ\u00e9e", "notes": ["Le passage \u00e0 Manhattan se fait \u00e0 pied via le Brooklyn Bridge (pas de m\u00e9tro n\u00e9cessaire) \u2014 le trajet du soir vers Times Square est donc le seul aller en transport de la journ\u00e9e."], "color": "#A7A9AC", "quote": {"text": "People will forget what you said, people will forget what you did, but people will never forget how you made them feel.", "author": "Maya Angelou"}, "stops": [{"type": "stop", "time": "9h30", "activity": "Brunch \u2014 <b>Caf\u00e9 LULUc</b> (214 Smith Street)", "duration": "1h", "price": "~110$ (~22$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=214+Smith+St%2C+Brooklyn%2C+NY&destination=DUMBO%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://www.cafeluluc.net"}, {"type": "connector", "label": "18 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=214+Smith+St%2C+Brooklyn%2C+NY&destination=DUMBO%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "10h48", "activity": "DUMBO", "duration": "45 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=DUMBO%2C+Brooklyn%2C+NY&destination=Brooklyn+Heights+Promenade%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "\ud83d\udcf8", "info": "https://en.wikipedia.org/wiki/Dumbo,_Brooklyn"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=DUMBO%2C+Brooklyn%2C+NY&destination=Brooklyn+Heights+Promenade%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "11h38", "activity": "Brooklyn Heights Promenade", "duration": "25 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Brooklyn+Heights+Promenade%2C+Brooklyn%2C+NY&destination=Brooklyn+Bridge%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "\ud83d\udcf8", "info": "https://en.wikipedia.org/wiki/Brooklyn_Heights_Promenade"}, {"type": "connector", "label": "5 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Brooklyn+Heights+Promenade%2C+Brooklyn%2C+NY&destination=Brooklyn+Bridge%2C+Brooklyn%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "12h08", "activity": "Travers\u00e9e du Brooklyn Bridge \u00e0 pied (vers Manhattan)", "duration": "45 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=City+Hall+Park%2C+New+York%2C+NY&destination=Chinatown%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf09", "info": "https://en.wikipedia.org/wiki/Brooklyn_Bridge"}, {"type": "connector", "label": "10 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=City+Hall+Park%2C+New+York%2C+NY&destination=Chinatown%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "13h03", "activity": "Chinatown & Little Italy (balade)", "duration": "1h", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Little+Italy%2C+New+York%2C+NY&destination=205+E+Houston+St%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udfee", "info": "https://en.wikipedia.org/wiki/Chinatown,_Manhattan"}, {"type": "connector", "label": "15 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Little+Italy%2C+New+York%2C+NY&destination=205+E+Houston+St%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "14h18", "activity": "D\u00e9jeuner \u2014 <b>Katz's Delicatessen</b> (205 E Houston St)", "duration": "45 min", "price": "~190$ (~38$/pers.)", "isEnd": false, "link": null, "icon": "\ud83c\udf7d\ufe0f", "info": "https://en.wikipedia.org/wiki/Katz%27s_Delicatessen"}, {"type": "stop", "time": "15h03", "activity": "Temps libre / repos (Lower East Side)", "duration": "~1h37", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=205+E+Houston+St%2C+New+York%2C+NY&destination=140+W+44th+St%2C+New+York%2C+NY&travelmode=transit", "icon": "\ud83d\udeb6", "info": null}, {"type": "connector", "label": "20 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=205+E+Houston+St%2C+New+York%2C+NY&destination=140+W+44th+St%2C+New+York%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "17h00", "activity": "Jimmy's Corner <i>(140 W 44th Street \u2014 bar historique, m\u00e9morabilia de boxe)</i>", "duration": "45 min", "price": "Pas d'entr\u00e9e \u2014 boissons en sus", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=140+W+44th+St%2C+New+York%2C+NY&destination=Times+Square%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf78", "info": "https://www.instagram.com/jimmyscornernyc"}, {"type": "connector", "label": "10 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=140+W+44th+St%2C+New+York%2C+NY&destination=Times+Square%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "17h55", "activity": "Balade Times Square (lumi\u00e8res du soir)", "duration": "45 min", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Times+Square%2C+New+York%2C+NY&destination=750+9th+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf03", "info": "https://en.wikipedia.org/wiki/Times_Square"}, {"type": "connector", "label": "15 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=Times+Square%2C+New+York%2C+NY&destination=750+9th+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "18h55", "activity": "D\u00eener \u2014 <b>Aqua Boil</b> (750 9th Ave, seafood boil cajun)", "duration": "1h15", "price": "~200$ (~40$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=750+9th+Ave%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83c\udf7d\ufe0f", "info": "https://www.aquaboilnyc.com"}, {"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=750+9th+Ave%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "20h40", "activity": "<b>Retour \u00e0 Brooklyn</b> \u2014 derni\u00e8re soir\u00e9e \u00e0 New York", "duration": null, "price": "Gratuit", "isEnd": true, "link": null, "icon": "\ud83d\ude87", "info": null}]}, {"id": 10, "dayNumber": "11", "dateLabel": "Samedi 8 ao\u00fbt", "nameLabel": "D\u00e9part (fin de journ\u00e9e)", "notes": [], "color": "#8b2361", "quote": {"text": "In God we trust. Everyone else, bring data.", "author": "Michael Bloomberg"}, "stops": [{"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Boerum+Hill%2C+Brooklyn%2C+NY&destination=242+W+16th+St%2C+New+York%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "9h30", "activity": "Brunch \u2014 <b>The Grey Dog - Chelsea</b> (242 W 16th Street)", "duration": "1h", "price": "~110$ (~22$/pers.)", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=242+W+16th+St%2C+New+York%2C+NY&destination=75+9th+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83c\udf7d\ufe0f", "info": "https://www.thegreydog.com"}, {"type": "connector", "label": "15 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=242+W+16th+St%2C+New+York%2C+NY&destination=75+9th+Ave%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "10h45", "activity": "Chelsea Market <i>(75 9th Ave)</i> ou Union Square", "duration": "1h", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=75+9th+Ave%2C+New+York%2C+NY&destination=Union+Square%2C+New+York%2C+NY&travelmode=walking", "icon": "\ud83e\udd56", "info": "https://en.wikipedia.org/wiki/Chelsea_Market"}, {"type": "connector", "label": "10 min \u00e0 pied", "link": "https://www.google.com/maps/dir/?api=1&origin=75+9th+Ave%2C+New+York%2C+NY&destination=Union+Square%2C+New+York%2C+NY&travelmode=walking", "icon": "walk"}, {"type": "stop", "time": "11h55", "activity": "Derniers achats autour d'Union Square", "duration": "1h", "price": "Gratuit", "isEnd": false, "link": "https://www.google.com/maps/dir/?api=1&origin=Union+Square%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "\ud83d\udecd\ufe0f", "info": "https://en.wikipedia.org/wiki/Union_Square,_Manhattan"}, {"type": "connector", "label": "30 min trajet", "link": "https://www.google.com/maps/dir/?api=1&origin=Union+Square%2C+New+York%2C+NY&destination=Boerum+Hill%2C+Brooklyn%2C+NY&travelmode=transit", "icon": "subway"}, {"type": "stop", "time": "13h25", "activity": "Bagages / pr\u00e9paration \u00e0 l'h\u00e9bergement", "duration": "35 min", "price": "Gratuit", "isEnd": false, "link": null, "icon": "\ud83d\ude87", "info": null}, {"type": "stop", "time": "14h00", "activity": "<b>D\u00e9part pour l'a\u00e9roport</b>", "duration": null, "price": "Gratuit", "isEnd": true, "link": null, "icon": "\ud83d\ude87", "info": null}]}]</script>
+<script>const DAYS = JSON.parse(document.getElementById('daydata').textContent);
+const RESERVATIONS = {
+  mandatory: [
+    { name: "Top of the Rock", day: "Mardi 4/8, 18h30", detail: "Billet horodaté obligatoire — le créneau coucher de soleil se vend des semaines à l'avance.", link: "https://www.topoftherocknyc.com", linkLabel: "topoftherocknyc.com" },
+    { name: "MoMA", day: "Mercredi 5/8, 9h25", detail: "Achat en ligne obligatoire pour garantir l'entrée — nombre limité de billets sur place.", link: "https://www.moma.org/visit/", linkLabel: "moma.org/visit" },
+    { name: "American Museum of Natural History", day: "Jeudi 6/8, 9h25", detail: "Entrée horodatée obligatoire sur le site officiel, même avec un pass type CityPASS.", link: "https://www.amnh.org/plan-your-visit", linkLabel: "amnh.org/plan-your-visit" },
+    { name: "Morgan Library (créneau gratuit)", day: "Vendredi 31/7, 17h00", detail: "Le créneau gratuit du vendredi soir (17h-20h) fonctionne uniquement sur réservation en ligne.", link: "https://www.themorgan.org/free-friday-evenings", linkLabel: "themorgan.org/free-friday-evenings" },
+  ],
+  recommended: [
+    { name: "Metropolitan Museum of Art", day: "Dimanche 2/8, 13h03", detail: "Système d'entrée horodatée — réservation en ligne vivement conseillée pour garantir un créneau.", link: "https://www.metmuseum.org/visit", linkLabel: "metmuseum.org/visit" },
+    { name: "Guggenheim", day: "Mercredi 5/8, 15h00", detail: "Pas obligatoire pour une visite en semaine, mais évite la file d'attente.", link: "https://www.guggenheim.org/visit", linkLabel: "guggenheim.org/visit" },
+    { name: "Aqua Boil (dîner, groupe de 5)", day: "Vendredi 7/8, 18h55", detail: "Restaurant de fruits de mer souvent complet le soir — réservation recommandée pour un groupe.", link: "https://www.aquaboilnyc.com/reservation", linkLabel: "aquaboilnyc.com/reservation", phone: "+1 212-464-7428" },
+    { name: "Café LULUc (brunch, groupe de 5)", day: "Vendredi 7/8, 9h30", detail: "Brunch populaire le week-end — pas de résa en ligne, appeler directement.", link: "https://www.cafeluluc.net", linkLabel: "cafeluluc.net", phone: "+1 718-625-3815" },
+    { name: "The Grey Dog - Chelsea (brunch, groupe de 5)", day: "Samedi 8/8, 9h30", detail: "Walk-ins toujours acceptés, mais réservation possible en ligne pour un groupe.", link: "https://www.thegreydog.com/reservations/", linkLabel: "thegreydog.com/reservations", phone: "+1 212-229-2345" },
+  ]
+};
+
+const BUDGET = {
+  rows: [
+    ['Activités, musées, restaurants (détail ci-dessous)', '~2 370$'],
+    ['Métro (~24 trajets, groupe de 5)', '~360$'],
+    ['Hôtel (40$/nuit × 10 nuits)', '400$'],
+    ['Taxi Newark ↔ Brooklyn (170$ × 2)', '340$'],
+    ['Taxi Paris ↔ Orly (41€ × 2 ≈ 93$)', '~93$'],
+  ],
+  total: '~3 563$',
+  detail: [
+    ['29/7', "Dîner — Junior's Restaurant", '~100$'],
+    ['30/7', 'Déjeuner — Shake Shack Rockefeller Center', '~85$'],
+    ['31/7', 'Déjeuner — Shake Shack Battery Park City', '~85$'],
+    ['31/7', 'Staten Island Ferry (vue Statue de la Liberté)', 'Gratuit'],
+    ['31/7', 'Morgan Library (gratuit vendredi 17h-20h)', 'Gratuit'],
+    ['1/8', "Joe's Pizza (déjeuner)", '~40$'],
+    ['2/8', 'Déjeuner — Lexington Candy Shop', '~80$'],
+    ['2/8', 'Metropolitan Museum of Art', '150$'],
+    ['3/8', 'Radio Bakery', '~50$'],
+    ['3/8', 'Brooklyn Museum (facultatif, suggéré)', '~100$'],
+    ['3/8', 'Déjeuner — Little Egg', '~90$'],
+    ['4/8', 'Déjeuner — Shake Shack Herald Square', '~85$'],
+    ['4/8', 'Top of the Rock (coucher de soleil)', '~275$'],
+    ['5/8', 'MoMA', '150$'],
+    ['5/8', 'Déjeuner — The Halal Guys', '~65$'],
+    ['5/8', 'Guggenheim', '150$'],
+    ['6/8', 'American Museum of Natural History', '~170$'],
+    ['6/8', 'Déjeuner — Shake Shack Upper West Side', '~85$'],
+    ['7/8', 'Brunch — Café LULUc', '~110$'],
+    ['7/8', "Déjeuner — Katz's Delicatessen", '~190$'],
+    ['7/8', 'Dîner — Aqua Boil', '~200$'],
+    ['8/8', 'Brunch — The Grey Dog - Chelsea', '~110$'],
+  ]
+};
+
+let checked = {}; // key: `${dayId}_${stopIndex}` -> true
+let currentDay = 0;
+let currentScreen = 'home';
+
+const app = document.getElementById('app');
+
+function iconFor(icon){
+  if(icon === 'subway') return '🚇';
+  if(icon === 'ferry') return '⛴️';
+  return '🚶';
+}
+
+async function loadChecked(){
+  try{
+    const raw = localStorage.getItem('nyc-trip-checked-items');
+    if(raw) checked = JSON.parse(raw);
+  }catch(e){ checked = {}; }
+}
+async function saveChecked(){
+  try{ localStorage.setItem('nyc-trip-checked-items', JSON.stringify(checked)); }catch(e){}
+}
+
+function dayProgress(day){
+  const stops = day.stops.filter(s=>s.type==='stop' && !s.isEnd);
+  if(stops.length===0) return {done:0,total:0};
+  let done=0;
+  day.stops.forEach((s,idx)=>{ if(s.type==='stop' && !s.isEnd && checked[day.id+'_'+idx]) done++; });
+  return {done, total:stops.length};
+}
+
+function renderHome(){
+  let html = `
+  <div class="hero">
+    <div class="eyebrow">✈️ Programme du séjour</div>
+    <h1>Voyage à New York<br>2026</h1>
+    <div class="sub">29 juillet — 8 août · Boerum Hill, Brooklyn</div>
+    <div class="stats">
+      <div class="stat"><b>11</b>jours</div>
+      <div class="stat"><b>5</b>voyageurs</div>
+      <div class="stat"><b>~2 685$</b>budget total</div>
+    </div>
+  </div>
+  <div class="linemap">
+    <div class="maptitle">Votre ligne — jour par jour</div>
+    ${DAYS.map(d=>{
+      const p = dayProgress(d);
+      const progressLabel = p.total ? `${p.done}/${p.total} faites` : '';
+      return `<div class="dayrow" data-day="${d.id}" style="--dot-color:${d.color}">
+        <div class="track" style="--dot-color:${d.color}"><div class="dot" style="background:${d.color}">${d.dayNumber}</div></div>
+        <div class="info">
+          <div class="d1">${d.dateLabel}</div>
+          <div class="d2">${d.nameLabel}</div>
+          ${progressLabel ? `<div class="progress">${progressLabel}</div>` : ''}
+        </div>
+        <div class="chev">›</div>
+      </div>`;
+    }).join('')}
+  </div>
+  <div class="installtip" id="installtip">
+    <span>📲</span>
+    <span>Ajoutez cette page à votre écran d'accueil (icône Partager → "Sur l'écran d'accueil") pour l'ouvrir comme une vraie app, plein écran.</span>
+    <span class="x" id="closeInstall">✕</span>
+  </div>
+  `;
+  return html;
+}
+
+function renderDay(dayId){
+  const day = DAYS[dayId];
+  let rows = '';
+  day.stops.forEach((s, idx)=>{
+    if(s.type === 'connector'){
+      rows += `<div class="connector">
+        <span class="ic">${iconFor(s.icon)}</span>
+        <span>${s.label}</span>
+        ${s.link ? `<a class="maplink" href="${s.link}" target="_blank">Itinéraire</a>` : ''}
+      </div>`;
+      return;
+    }
+    const key = day.id+'_'+idx;
+    const isChecked = !!checked[key];
+    const isFree = (s.price === 'Gratuit' || s.price === 'Inclus');
+    const cardClass = s.isEnd ? 'card end' : 'card' + (isChecked ? ' done' : '');
+    const showCheckbox = !s.isEnd;
+    rows += `<div class="trow ${isChecked?'done':''}">
+      <div class="rail"><div class="seg"></div><div class="node" style="--dot-color:${day.color}"></div><div class="seg"></div></div>
+      <div class="content">
+        <div class="${cardClass}" ${s.info ? `data-link="${s.info}"` : ''} data-key="${key}">
+          <div class="ctop">
+            <span class="cardicon">${s.icon||'📍'}</span>
+            <span class="time">${s.time}</span>
+            ${s.duration ? `<span class="dur">${s.duration}</span>` : ''}
+          </div>
+          <div class="act">${s.activity}</div>
+          <div class="brow">
+            <span class="price ${isFree?'free':''}">${s.price}</span>
+            <div class="cardactions">
+              ${showCheckbox ? `<div class="cb" data-checkbox="${key}">${isChecked?'✓':''}</div>` : ''}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  return `
+  <div class="topbar">
+    <button class="backbtn" id="backHome">‹</button>
+    <div class="bullet" style="background:${day.color}">${day.dayNumber}</div>
+    <h1>${day.nameLabel}</h1>
+  </div>
+  <div class="daymeta">
+    <div class="d1">${day.dateLabel}</div>
+  </div>
+  <div class="quote" style="--dot-color:${day.color}">
+    "${day.quote.text}"
+    <span class="auth">(${day.quote.author})</span>
+  </div>
+  ${day.notes.map(n=>`<div class="daynote">${n}</div>`).join('')}
+  <div class="timeline">${rows}</div>
+  `;
+}
+
+function renderReservations(){
+  const card = (r) => `<div class="rescard">
+    <div class="resname">${r.name}</div>
+    <div class="resday">${r.day}</div>
+    <div class="resdetail">${r.detail}</div>
+    <div class="reslinks">
+      <a href="${r.link}" target="_blank">${r.linkLabel}</a>
+      ${r.phone ? `<a href="tel:${r.phone.replace(/\s/g,'')}">📞 ${r.phone}</a>` : ''}
+    </div>
+  </div>`;
+
+  return `
+  <div class="topbar"><h1 style="text-align:left">📋 Réservations</h1></div>
+  <div class="resgroup">
+    <div class="resgrouptitle mandatory">🔴 Obligatoire</div>
+    ${RESERVATIONS.mandatory.map(card).join('')}
+  </div>
+  <div class="resgroup">
+    <div class="resgrouptitle recommended">🟡 Recommandé</div>
+    ${RESERVATIONS.recommended.map(card).join('')}
+  </div>
+  `;
+}
+
+function renderBudget(){
+  return `
+  <div class="topbar"><h1 style="text-align:left">💰 Budget du séjour</h1></div>
+  <div class="budgetcard">
+    <h2>Récapitulatif</h2>
+    ${BUDGET.rows.map(([label,amount])=>`<div class="brow2"><span>${label}</span><b>${amount}</b></div>`).join('')}
+    <div class="brow2 total"><span>Total estimé</span><b>${BUDGET.total}</b></div>
+  </div>
+  <div class="budgetnote">Couvre billets, repas listés, transport en commun, hôtel et taxis aéroport. Vols internationaux et achats personnels non inclus.</div>
+  <div class="warnbox">⚠️ Prix indicatifs 2026, non-résidents, hors taxes/pourboire/boissons, pour 2 adultes + 3 enfants majeurs (5 tarifs adulte). Le Top of the Rock a un tarif dynamique selon le créneau — à vérifier avant réservation. Taxi Orly converti au taux EUR/USD du jour (~1,137).</div>
+  <div class="budgetcard" style="margin-top:0;">
+    <h2>Détail activités & restaurants</h2>
+    ${BUDGET.detail.map(([day,label,amount])=>`<div class="brow2"><span><b style="color:var(--text-dim);font-weight:700;">${day}</b> &nbsp;${label}</span><b>${amount}</b></div>`).join('')}
+    <div class="brow2 total"><span>Sous-total</span><b>~2 518$</b></div>
+  </div>
+  `;
+}
+
+function renderTabbar(){
+  return `
+  <div class="tabbar">
+    <div class="tab ${currentScreen==='home'?'active':''}" data-tab="home"><div class="ti">🗺️</div>Programme</div>
+    <div class="tab ${currentScreen==='reservations'?'active':''}" data-tab="reservations"><div class="ti">📋</div>Résa</div>
+    <div class="tab ${currentScreen==='budget'?'active':''}" data-tab="budget"><div class="ti">💰</div>Budget</div>
+  </div>`;
+}
+
+function render(){
+  let inner = '';
+  if(currentScreen === 'home') inner = renderHome();
+  else if(currentScreen === 'day') inner = renderDay(currentDay);
+  else if(currentScreen === 'reservations') inner = renderReservations();
+  else if(currentScreen === 'budget') inner = renderBudget();
+
+  app.innerHTML = `<div class="screen active">${inner}</div>` + renderTabbar();
+  attachHandlers();
+}
+
+function attachHandlers(){
+  document.querySelectorAll('[data-day]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      currentDay = parseInt(el.getAttribute('data-day'));
+      currentScreen = 'day';
+      render();
+    });
+  });
+  const backBtn = document.getElementById('backHome');
+  if(backBtn) backBtn.addEventListener('click', ()=>{ currentScreen='home'; render(); });
+
+  document.querySelectorAll('[data-tab]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      currentScreen = el.getAttribute('data-tab');
+      render();
+    });
+  });
+
+  document.querySelectorAll('[data-checkbox]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const key = el.getAttribute('data-checkbox');
+      checked[key] = !checked[key];
+      saveChecked();
+      render();
+    });
+  });
+
+  document.querySelectorAll('.card[data-link]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      if(e.target.closest('[data-checkbox]')) return;
+      const link = el.getAttribute('data-link');
+      if(link) window.open(link, '_blank');
+    });
+  });
+
+  const closeInstall = document.getElementById('closeInstall');
+  const tip = document.getElementById('installtip');
+  if(closeInstall && tip){
+    closeInstall.addEventListener('click', (e)=>{ e.stopPropagation(); tip.style.display='none'; });
+  }
+}
+
+(async function init(){
+  await loadChecked();
+  render();
+})();
+</script>
+</body>
+</html>
