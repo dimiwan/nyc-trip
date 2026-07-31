@@ -115,16 +115,10 @@ html,body{margin:0;padding:0;height:100%;background:#0d0d0d;color:#f5f5f0;
 
 /* ===== BUDGET SCREEN ===== */
 .budgetcard{margin:16px 18px; background:#1a1a1a; border-radius:16px; padding:18px;}
-.realexpheader{margin:22px 18px 8px; font-size:15px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#4fd88a; padding-top:10px; border-top:2px solid #2c2c2c;}
-.expitem{padding:9px 0; border-bottom:1px solid #2c2c2c;}
-.expitem:last-child{border-bottom:none;}
-.expmain{display:flex; align-items:baseline; gap:8px;}
-.exptime{font-size:11.5px; color:#9a9a94; font-weight:700; white-space:nowrap;}
-.expmerchant{font-size:14px; font-weight:700; color:#f5f5f0; flex:1;}
-.expamount{font-size:14px; font-weight:800; color:#4fd88a; white-space:nowrap;}
-.expsub{display:flex; justify-content:space-between; margin-top:2px; padding-left:2px;}
-.expaddr{font-size:11px; color:#777;}
-.expcat{font-size:10.5px; color:#b83280; background:#2a1c24; padding:1px 7px; border-radius:6px; font-weight:700; margin-left:auto;}
+.brow2.real{background:#132118; margin:0 -8px; padding:9px 8px; border-radius:8px;}
+.realtag{font-size:9.5px; font-weight:800; color:#4fd88a; background:#0e2418; padding:2px 6px; border-radius:5px; letter-spacing:0.5px; margin-right:4px;}
+.exclnote{font-size:9.5px; color:#777; font-weight:500; display:block;}
+.expcat{font-size:10px; color:#b83280; background:#2a1c24; padding:1px 6px; border-radius:5px; font-weight:700; margin-left:4px;}
 .resgroup{margin:16px 18px;}
 .resgrouptitle{font-size:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; padding:8px 0; margin-bottom:6px;}
 .resgrouptitle.mandatory{color:#ff6b6b;}
@@ -207,35 +201,44 @@ const REAL_EXPENSES = {
 
 const BUDGET = {
   rows: [
-    ['Activités, musées, restaurants (détail ci-dessous)', '~2 090$'],
-    ['Métro (~22 trajets, groupe de 5)', '~330$'],
+    ['Activités, musées, restaurants (détail ci-dessous)', '~2 551$'],
+    ['Métro (~22 trajets, groupe de 5 + recharges réelles)', '~330$'],
     ['Hôtel (40$/nuit × 10 nuits)', '400$'],
     ['Taxi Newark ↔ Brooklyn (170$ × 2)', '340$'],
     ['Taxi Paris ↔ Orly (41€ × 2 ≈ 93$)', '~93$'],
   ],
-  total: '~3 253$',
+  total: '~3 714$',
+  // Liste unifiée, chronologique : dépenses réelles (jours déjà vécus) puis budget prévisionnel (jours à venir)
   detail: [
-    ['30/7', 'Déjeuner — Shake Shack Rockefeller Center', '~85$'],
-    ['31/7', 'Déjeuner — Shake Shack Battery Park City', '~85$'],
-    ['31/7', 'Staten Island Ferry (vue Statue de la Liberté)', 'Gratuit'],
-    ['1/8', "Joe's Pizza (déjeuner)", '~40$'],
-    ['2/8', 'Déjeuner — Lexington Candy Shop', '~80$'],
-    ['2/8', 'Metropolitan Museum of Art', '150$'],
-    ['3/8', 'Radio Bakery', '~50$'],
-    ['3/8', 'Brooklyn Museum (facultatif, suggéré)', '~100$'],
-    ['3/8', 'Déjeuner — Little Egg', '~90$'],
-    ['4/8', 'Déjeuner — Shake Shack Herald Square', '~85$'],
-    ['4/8', 'Top of the Rock (coucher de soleil, prix réel payé)', '335$'],
-    ['5/8', 'MoMA (prix réel payé)', '94$'],
-    ['5/8', 'Déjeuner — The Halal Guys', '~65$'],
-    ['5/8', 'Guggenheim', '150$'],
-    ['6/8', 'American Museum of Natural History (prix réel payé)', '156$'],
-    ['6/8', 'Déjeuner — Shake Shack Upper West Side', '~85$'],
-    ['7/8', 'Brunch — Café LULUc', '~110$'],
-    ['7/8', 'Morgan Library (gratuit vendredi 17h-20h)', 'Gratuit'],
-    ['7/8', "Déjeuner — Katz's Delicatessen", '~190$'],
-    ['7/8', 'Dîner — Aqua Boil', '~200$'],
-    ['8/8', 'Brunch — The Grey Dog - Chelsea', '~110$'],
+    { type:'real', date:'30/7', time:'10:18', merchant:'Starbucks Store #7506', category:'Restaurant/Café', amount:'59,58$' },
+    { type:'real', date:'30/7', time:'13:23', merchant:'Shake Shack (Rockefeller)', category:'Restaurant', amount:'72,42$' },
+    { type:'real', date:'30/7', time:'20:03', merchant:'Fairway Markets', category:'Alimentation', amount:'12,57$' },
+    { type:'real', date:'30/7', time:'21:34', merchant:'Fumo UES', category:'Restaurant', amount:'160,73$' },
+    { type:'real', date:'30/7', time:'21:47', merchant:'OMNY (recharge carte 1)', category:'Métro', amount:'36,00$', excluded:true },
+    { type:'real', date:'30/7', time:'21:48', merchant:'OMNY (recharge carte 2)', category:'Métro', amount:'36,00$', excluded:true },
+    { type:'real', date:'31/7', time:'11:07', merchant:'& Other Stories', category:'Shopping', amount:'53,89$' },
+    { type:'real', date:'31/7', time:'12:17', merchant:'Whole Foods Market', category:'Alimentation', amount:'5,41$' },
+    { type:'real', date:'31/7', time:'13:28', merchant:'7th Street Burger', category:'Restaurant', amount:'56,08$' },
+    { type:'real', date:'31/7', time:'matin', merchant:'Café', category:'Café', amount:'21,50$' },
+    { type:'real', date:'31/7', time:'15:44', merchant:'Shake Shack (Staten Island)', category:'Restaurant', amount:'18,48$' },
+    { type:'budget', day:'1/8', label:"Joe's Pizza (déjeuner)", amount:'~40$' },
+    { type:'budget', day:'2/8', label:'Déjeuner — Lexington Candy Shop', amount:'~80$' },
+    { type:'budget', day:'2/8', label:'Metropolitan Museum of Art', amount:'150$' },
+    { type:'budget', day:'3/8', label:'Radio Bakery', amount:'~50$' },
+    { type:'budget', day:'3/8', label:'Brooklyn Museum (facultatif, suggéré)', amount:'~100$' },
+    { type:'budget', day:'3/8', label:'Déjeuner — Little Egg', amount:'~90$' },
+    { type:'budget', day:'4/8', label:'Déjeuner — Shake Shack Herald Square', amount:'~85$' },
+    { type:'budget', day:'4/8', label:'Top of the Rock (coucher de soleil, prix réel payé)', amount:'335$' },
+    { type:'budget', day:'5/8', label:'MoMA (prix réel payé)', amount:'94$' },
+    { type:'budget', day:'5/8', label:'Déjeuner — The Halal Guys', amount:'~65$' },
+    { type:'budget', day:'5/8', label:'Guggenheim', amount:'150$' },
+    { type:'budget', day:'6/8', label:'American Museum of Natural History (prix réel payé)', amount:'156$' },
+    { type:'budget', day:'6/8', label:'Déjeuner — Shake Shack Upper West Side', amount:'~85$' },
+    { type:'budget', day:'7/8', label:'Brunch — Café LULUc', amount:'~110$' },
+    { type:'budget', day:'7/8', label:'Morgan Library (gratuit vendredi 17h-20h)', amount:'Gratuit' },
+    { type:'budget', day:'7/8', label:"Déjeuner — Katz's Delicatessen", amount:'~190$' },
+    { type:'budget', day:'7/8', label:'Dîner — Aqua Boil', amount:'~200$' },
+    { type:'budget', day:'8/8', label:'Brunch — The Grey Dog - Chelsea', amount:'~110$' },
   ]
 };
 
@@ -387,42 +390,29 @@ function renderReservations(){
 }
 
 function renderBudget(){
+  const detailRow = (item) => {
+    if(item.type === 'real'){
+      return `<div class="brow2 real"><span><span class="realtag">RÉEL</span> <b style="color:var(--text-dim);font-weight:700;">${item.date} ${item.time}</b> &nbsp;${item.merchant} <span class="expcat">${item.category}</span></span><b>${item.amount}${item.excluded ? ' <span class="exclnote">(hors total, voir Métro)</span>' : ''}</b></div>`;
+    }
+    return `<div class="brow2"><span><b style="color:var(--text-dim);font-weight:700;">${item.day}</b> &nbsp;${item.label}</span><b>${item.amount}</b></div>`;
+  };
+
   return `
   <div class="topbar"><h1 style="text-align:left">💰 Budget du séjour</h1></div>
   <div class="budgetcard">
-    <h2>Prévisionnel</h2>
+    <h2>Récapitulatif</h2>
     ${BUDGET.rows.map(([label,amount])=>`<div class="brow2"><span>${label}</span><b>${amount}</b></div>`).join('')}
     <div class="brow2 total"><span>Total estimé</span><b>${BUDGET.total}</b></div>
   </div>
-  <div class="budgetnote">Couvre billets, repas listés, transport en commun, hôtel et taxis aéroport. Vols internationaux et achats personnels non inclus. Les repas des 29-31/7 sont retirés : remplacés par les dépenses réelles ci-dessous.</div>
-  <div class="warnbox">⚠️ Prix indicatifs 2026, non-résidents, hors taxes/pourboire/boissons, pour 2 adultes + 3 enfants majeurs (5 tarifs adulte). Top of the Rock, MoMA et AMNH sont au prix réel payé.</div>
+  <div class="budgetnote">Couvre billets, repas, transport en commun, hôtel et taxis aéroport. Vols internationaux et achats personnels non inclus. Les jours déjà passés affichent les dépenses réelles enregistrées ; les jours à venir restent au prévisionnel.</div>
+  <div class="warnbox">⚠️ Prix indicatifs 2026 pour les jours futurs. Top of the Rock, MoMA et AMNH sont au prix réel payé. Les recharges de métro (OMNY) apparaissent dans le détail pour information mais ne sont pas comptées deux fois — elles sont couvertes par la ligne "Métro" du récapitulatif.</div>
   <div class="budgetcard" style="margin-top:0;">
-    <h2>Détail activités & restaurants (prévisionnel)</h2>
-    ${BUDGET.detail.map(([day,label,amount])=>`<div class="brow2"><span><b style="color:var(--text-dim);font-weight:700;">${day}</b> &nbsp;${label}</span><b>${amount}</b></div>`).join('')}
-    <div class="brow2 total"><span>Sous-total</span><b>~2 090$</b></div>
+    <h2>Détail activités & restaurants</h2>
+    ${BUDGET.detail.map(detailRow).join('')}
+    <div class="brow2 total"><span>Sous-total</span><b>~2 551$</b></div>
   </div>
-
-  <div class="realexpheader">💳 Dépenses réelles enregistrées</div>
-  ${REAL_EXPENSES.byDate.map(day => `
-    <div class="budgetcard" style="margin-top:0;">
-      <h2>${day.date}</h2>
-      ${day.items.map(it => `
-        <div class="expitem">
-          <div class="expmain">
-            <span class="exptime">${it.time}</span>
-            <span class="expmerchant">${it.merchant}</span>
-            <span class="expamount">${it.amount}</span>
-          </div>
-          <div class="expsub">
-            ${it.addr ? `<span class="expaddr">${it.addr}</span>` : ''}
-            <span class="expcat">${it.category}</span>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `).join('')}
   <div class="budgetcard" style="margin-top:0;">
-    <h2>Total par catégorie</h2>
+    <h2>💳 Total dépenses réelles par catégorie</h2>
     ${REAL_EXPENSES.byCategory.map(([cat,amount])=>`<div class="brow2"><span>${cat}</span><b>${amount}</b></div>`).join('')}
     <div class="brow2 total"><span>Total dépenses réelles</span><b>${REAL_EXPENSES.total}</b></div>
   </div>
