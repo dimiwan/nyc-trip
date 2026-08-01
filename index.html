@@ -171,18 +171,17 @@ const RESERVATIONS = {
 };
 
 const REAL_EXPENSES = {
-  total: '728,97$',
+  total: '755,62$',
   byCategory: [
     ['Restaurant', '307,71$'],
-    ['Shopping', '203,89$'],
-    ['Alimentation', '64,29$'],
+    ['Shopping', '209,80$'],
+    ['Alimentation', '67,07$'],
     ['Métro', '72,00$'],
-    ['Restaurant/Café', '59,58$'],
-    ['Café', '21,50$'],
+    ['Café', '99,04$'],
   ],
   byDate: [
     { date: '30 juillet', items: [
-      { time: '10:18', merchant: 'Starbucks Store #7506', addr: '150 E. 42nd Street', category: 'Restaurant/Café', amount: '59,58$' },
+      { time: '10:18', merchant: 'Starbucks Store #7506', addr: '150 E. 42nd Street', category: 'Café', amount: '59,58$' },
       { time: '13:23', merchant: 'Shake Shack', addr: '30 Rockefeller Plaza-Rink', category: 'Restaurant', amount: '72,42$' },
       { time: '20:03', merchant: 'Fairway Markets', addr: '240 East 86th Street', category: 'Alimentation', amount: '12,57$' },
       { time: '21:34', merchant: 'Fumo UES', addr: '1626 2nd Ave', category: 'Restaurant', amount: '160,73$' },
@@ -201,41 +200,49 @@ const REAL_EXPENSES = {
 
 const BUDGET = {
   rows: [
-    ['Activités, musées, restaurants (détail ci-dessous)', '~2 746$'],
+    ['Activités, musées, restaurants (détail ci-dessous)', '~3 073$'],
     ['Métro (~22 trajets, groupe de 5 + recharges réelles)', '~330$'],
     ['Hôtel (40$/nuit × 10 nuits)', '400$'],
     ['Taxi Newark ↔ Brooklyn (170$ × 2)', '340$'],
     ['Taxi Paris ↔ Orly (41€ × 2 ≈ 93$)', '~93$'],
   ],
-  total: '~3 909$',
+  total: '~4 236$',
   // Liste unifiée, chronologique : dépenses réelles (jours déjà vécus) puis budget prévisionnel (jours à venir)
   detail: [
-    { type:'real', date:'30/7', time:'10:18', merchant:'Starbucks Store #7506', category:'Restaurant/Café', amount:'59,58$' },
+    { type:'real', date:'30/7', time:'10:18', merchant:'Starbucks Store #7506', category:'Café', amount:'59,58$' },
     { type:'real', date:'30/7', time:'13:23', merchant:'Shake Shack (Rockefeller)', category:'Restaurant', amount:'72,42$' },
     { type:'real', date:'30/7', time:'20:03', merchant:'Fairway Markets', category:'Alimentation', amount:'12,57$' },
     { type:'real', date:'30/7', time:'21:34', merchant:'Fumo UES', category:'Restaurant', amount:'160,73$' },
     { type:'real', date:'30/7', time:'21:47', merchant:'OMNY (recharge carte 1)', category:'Métro', amount:'36,00$', excluded:true },
     { type:'real', date:'30/7', time:'21:48', merchant:'OMNY (recharge carte 2)', category:'Métro', amount:'36,00$', excluded:true },
-    { type:'real', date:'30/7', time:'—', merchant:'Swarovski — bague pour Diane', category:'Shopping', amount:'150,00$' },
+    { type:'real', date:'30/7', time:'15:20', merchant:'Swarovski — bague pour Diane', category:'Shopping', amount:'155,91$' },
     { type:'real', date:'31/7', time:'11:07', merchant:'& Other Stories', category:'Shopping', amount:'53,89$' },
     { type:'real', date:'31/7', time:'12:17', merchant:'Whole Foods Market', category:'Alimentation', amount:'5,41$' },
     { type:'real', date:'31/7', time:'13:28', merchant:'7th Street Burger', category:'Restaurant', amount:'56,08$' },
     { type:'real', date:'31/7', time:'matin', merchant:'Café', category:'Café', amount:'21,50$' },
     { type:'real', date:'31/7', time:'15:44', merchant:'Shake Shack (Staten Island)', category:'Restaurant', amount:'18,48$' },
     { type:'real', date:'31/7', time:'18:28', merchant:'Lidl', category:'Alimentation', amount:'46,31$' },
+    { type:'real', date:'31/7', time:'19:23', merchant:'Budget Mart Inc — verres plastique', category:'Alimentation', amount:'2,78$' },
+    { type:'real', date:'1/8', time:'08:41', merchant:'White Noise Coffee Co', category:'Café', amount:'17,96$' },
     { type:'budget', day:'1/8', label:"Joe's Pizza (déjeuner)", amount:'~40$' },
+    { type:'budget', day:'1/8', label:'Dîner (moyenne restaurant/pique-nique/invité)', amount:'~50$' },
     { type:'budget', day:'2/8', label:'Déjeuner — Lexington Candy Shop', amount:'~80$' },
     { type:'budget', day:'2/8', label:'Metropolitan Museum of Art', amount:'150$' },
+    { type:'budget', day:'2/8', label:'Dîner (moyenne restaurant/pique-nique/invité)', amount:'~50$' },
     { type:'budget', day:'3/8', label:'Radio Bakery', amount:'~50$' },
     { type:'budget', day:'3/8', label:'Brooklyn Museum (facultatif, suggéré)', amount:'~100$' },
     { type:'budget', day:'3/8', label:'Déjeuner — Little Egg', amount:'~90$' },
+    { type:'budget', day:'3/8', label:'Dîner (moyenne restaurant/pique-nique/invité)', amount:'~50$' },
     { type:'budget', day:'4/8', label:'Déjeuner — Shake Shack Herald Square', amount:'~85$' },
     { type:'budget', day:'4/8', label:'Top of the Rock (coucher de soleil, prix réel payé)', amount:'335$' },
+    { type:'budget', day:'4/8', label:'Dîner (moyenne restaurant/pique-nique/invité)', amount:'~50$' },
     { type:'budget', day:'5/8', label:'MoMA (prix réel payé)', amount:'94$' },
     { type:'budget', day:'5/8', label:'Déjeuner — The Halal Guys', amount:'~65$' },
     { type:'budget', day:'5/8', label:'Guggenheim', amount:'150$' },
+    { type:'budget', day:'5/8', label:'Dîner (moyenne restaurant/pique-nique/invité)', amount:'~50$' },
     { type:'budget', day:'6/8', label:'American Museum of Natural History (prix réel payé)', amount:'156$' },
     { type:'budget', day:'6/8', label:'Déjeuner — Shake Shack Upper West Side', amount:'~85$' },
+    { type:'budget', day:'6/8', label:'Dîner (moyenne restaurant/pique-nique/invité)', amount:'~50$' },
     { type:'budget', day:'7/8', label:'Brunch — Café LULUc', amount:'~110$' },
     { type:'budget', day:'7/8', label:'Morgan Library (gratuit vendredi 17h-20h)', amount:'Gratuit' },
     { type:'budget', day:'7/8', label:"Déjeuner — Katz's Delicatessen", amount:'~190$' },
@@ -411,7 +418,7 @@ function renderBudget(){
   <div class="budgetcard" style="margin-top:0;">
     <h2>Détail activités & restaurants</h2>
     ${BUDGET.detail.map(detailRow).join('')}
-    <div class="brow2 total"><span>Sous-total</span><b>~2 746$</b></div>
+    <div class="brow2 total"><span>Sous-total</span><b>~3 073$</b></div>
   </div>
   <div class="budgetcard" style="margin-top:0;">
     <h2>💳 Total dépenses réelles par catégorie</h2>
