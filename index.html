@@ -123,6 +123,14 @@ html,body{margin:0;padding:0;height:100%;background:#0d0d0d;color:#f5f5f0;
 /* ===== BUDGET SCREEN ===== */
 .budgetcard{margin:16px 18px; background:#1a1a1a; border-radius:16px; padding:18px;}
 .brow2.real{background:#132118; margin:0 -8px; padding:9px 8px; border-radius:8px;}
+.brow2.catclickable{cursor:pointer;}
+.brow2.catclickable:active{background:rgba(255,255,255,0.05);}
+.catdetail{display:none; flex-direction:column; gap:6px; padding:4px 4px 12px 12px; margin-top:-2px;}
+.catdetail.open{display:flex;}
+.catdetailitem{display:flex; align-items:baseline; gap:8px; font-size:12px; padding:6px 8px; background:#181818; border-radius:8px; border-left:3px solid #4fd88a;}
+.catdetaildate{color:#9a9a94; font-weight:700; white-space:nowrap; font-size:11px;}
+.catdetailmerchant{flex:1; color:#e8e0ee;}
+.catdetailamount{color:#4fd88a; font-weight:700; white-space:nowrap;}
 .realtag{font-size:9.5px; font-weight:800; color:#4fd88a; background:#0e2418; padding:2px 6px; border-radius:5px; letter-spacing:0.5px; margin-right:4px;}
 .exclnote{font-size:9.5px; color:#777; font-weight:500; display:block;}
 .expcat{font-size:10px; color:#b83280; background:#2a1c24; padding:1px 6px; border-radius:5px; font-weight:700; margin-left:4px;}
@@ -178,11 +186,11 @@ const RESERVATIONS = {
 };
 
 const REAL_EXPENSES = {
-  total: '1 057,00$',
+  total: '1 127,77$',
   byCategory: [
     ['Restaurant', '359,56$'],
     ['Musée', '94,00$'],
-    ['Shopping', '209,80$'],
+    ['Shopping', '280,57$'],
     ['Alimentation', '178,83$'],
     ['Métro', '72,00$'],
     ['Café', '142,81$'],
@@ -208,13 +216,13 @@ const REAL_EXPENSES = {
 
 const BUDGET = {
   rows: [
-    ['Activités, musées, restaurants (détail ci-dessous)', '~3 005$'],
+    ['Activités, musées, restaurants (détail ci-dessous)', '~3 076$'],
     ['Métro (~22 trajets, groupe de 5 + recharges réelles)', '~330$'],
     ['Hôtel (40$/nuit × 10 nuits)', '400$'],
     ['Taxi Newark ↔ Brooklyn (170$ × 2)', '340$'],
     ['Taxi Paris ↔ Orly (41€ × 2 ≈ 93$)', '~93$'],
   ],
-  total: '~4 168$',
+  total: '~4 239$',
   // Liste unifiée, chronologique : dépenses réelles (jours déjà vécus) puis budget prévisionnel (jours à venir)
   detail: [
     { type:'real', date:'30/7', time:'10:18', merchant:'Starbucks Store #7506', category:'Café', amount:'59,58$' },
@@ -224,7 +232,7 @@ const BUDGET = {
     { type:'real', date:'30/7', time:'21:47', merchant:'OMNY (recharge carte 1)', category:'Métro', amount:'36,00$', excluded:true },
     { type:'real', date:'30/7', time:'21:48', merchant:'OMNY (recharge carte 2)', category:'Métro', amount:'36,00$', excluded:true },
     { type:'real', date:'30/7', time:'15:20', merchant:'Swarovski — bague pour Diane', category:'Shopping', amount:'155,91$' },
-    { type:'real', date:'31/7', time:'11:07', merchant:'& Other Stories', category:'Shopping', amount:'53,89$' },
+    { type:'real', date:'31/7', time:'11:07', merchant:'& Other Stories — lunettes pour Sibylle', category:'Shopping', amount:'53,89$' },
     { type:'real', date:'31/7', time:'12:17', merchant:'Whole Foods Market', category:'Alimentation', amount:'5,41$' },
     { type:'real', date:'31/7', time:'13:28', merchant:'7th Street Burger', category:'Restaurant', amount:'56,08$' },
     { type:'real', date:'31/7', time:'matin', merchant:'Café', category:'Café', amount:'21,50$' },
@@ -236,6 +244,7 @@ const BUDGET = {
     { type:'real', date:'1/8', time:'18:21', merchant:'Chelsea Square Market', category:'Alimentation', amount:'12,45$' },
     { type:'real', date:'1/8', time:'18:41', merchant:'Gristedes', category:'Alimentation', amount:'15,59$' },
     { type:'real', date:'1/8', time:'18:55', merchant:'Community Wine and Spirits', category:'Alimentation', amount:'14,15$' },
+    { type:'real', date:'1/8', time:'—', merchant:'Silver Elephant Jewelry — bracelet pour Bérénice', category:'Shopping', amount:'70,77$' },
     { type:'real', date:'2/8', time:'09:07', merchant:'White Noise Coffee Co', category:'Café', amount:'23,41$' },
     { type:'real', date:'2/8', time:'13:09', merchant:'2788 Bagels', category:'Restaurant', amount:'51,85$' },
     { type:'real', date:'2/8', time:'13:15', merchant:'Broadway Tobacco House — bière', category:'Alimentation', amount:'12,48$' },
@@ -431,6 +440,19 @@ function renderBudget(){
     return `<div class="brow2"><span><b style="color:var(--text-dim);font-weight:700;">${item.day}</b> &nbsp;${item.label}</span><b>${item.amount}</b></div>`;
   };
 
+  const categoryRow = ([cat, amount]) => {
+    const items = BUDGET.detail.filter(it => it.type === 'real' && it.category === cat);
+    const toggleId = 'cat-' + cat.replace(/[^a-zA-Z0-9]/g,'');
+    return `<div class="brow2 catclickable" data-toggle="${toggleId}"><span>${cat} <span class="subhint" style="margin-left:6px;">▾ ${items.length}</span></span><b>${amount}</b></div>
+    <div class="catdetail" id="${toggleId}">
+      ${items.map(it => `<div class="catdetailitem">
+        <span class="catdetaildate">${it.date}${it.time && it.time!=='—' ? ' · '+it.time : ''}</span>
+        <span class="catdetailmerchant">${it.merchant}</span>
+        <span class="catdetailamount">${it.amount}</span>
+      </div>`).join('')}
+    </div>`;
+  };
+
   return `
   <div class="topbar"><h1 style="text-align:left">💰 Budget du séjour</h1></div>
   <div class="budgetcard">
@@ -443,11 +465,11 @@ function renderBudget(){
   <div class="budgetcard" style="margin-top:0;">
     <h2>Détail activités & restaurants</h2>
     ${BUDGET.detail.map(detailRow).join('')}
-    <div class="brow2 total"><span>Sous-total</span><b>~3 005$</b></div>
+    <div class="brow2 total"><span>Sous-total</span><b>~3 076$</b></div>
   </div>
   <div class="budgetcard" style="margin-top:0;">
     <h2>💳 Total dépenses réelles par catégorie</h2>
-    ${REAL_EXPENSES.byCategory.map(([cat,amount])=>`<div class="brow2"><span>${cat}</span><b>${amount}</b></div>`).join('')}
+    ${REAL_EXPENSES.byCategory.map(categoryRow).join('')}
     <div class="brow2 total"><span>Total dépenses réelles</span><b>${REAL_EXPENSES.total}</b></div>
   </div>
   `;
@@ -523,6 +545,14 @@ function attachHandlers(){
       const targetId = el.getAttribute('data-toggle');
       const sub = document.getElementById(targetId);
       if(sub) sub.classList.toggle('open');
+    });
+  });
+
+  document.querySelectorAll('.catclickable[data-toggle]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const targetId = el.getAttribute('data-toggle');
+      const det = document.getElementById(targetId);
+      if(det) det.classList.toggle('open');
     });
   });
 
