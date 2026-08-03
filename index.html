@@ -178,12 +178,12 @@ const RESERVATIONS = {
 };
 
 const REAL_EXPENSES = {
-  total: '999,91$',
+  total: '1 057,00$',
   byCategory: [
     ['Restaurant', '359,56$'],
     ['Musée', '94,00$'],
     ['Shopping', '209,80$'],
-    ['Alimentation', '121,74$'],
+    ['Alimentation', '178,83$'],
     ['Métro', '72,00$'],
     ['Café', '142,81$'],
   ],
@@ -208,13 +208,13 @@ const REAL_EXPENSES = {
 
 const BUDGET = {
   rows: [
-    ['Activités, musées, restaurants (détail ci-dessous)', '~2 998$'],
+    ['Activités, musées, restaurants (détail ci-dessous)', '~3 005$'],
     ['Métro (~22 trajets, groupe de 5 + recharges réelles)', '~330$'],
     ['Hôtel (40$/nuit × 10 nuits)', '400$'],
     ['Taxi Newark ↔ Brooklyn (170$ × 2)', '340$'],
     ['Taxi Paris ↔ Orly (41€ × 2 ≈ 93$)', '~93$'],
   ],
-  total: '~4 161$',
+  total: '~4 168$',
   // Liste unifiée, chronologique : dépenses réelles (jours déjà vécus) puis budget prévisionnel (jours à venir)
   detail: [
     { type:'real', date:'30/7', time:'10:18', merchant:'Starbucks Store #7506', category:'Café', amount:'59,58$' },
@@ -240,7 +240,10 @@ const BUDGET = {
     { type:'real', date:'2/8', time:'13:09', merchant:'2788 Bagels', category:'Restaurant', amount:'51,85$' },
     { type:'real', date:'2/8', time:'13:15', merchant:'Broadway Tobacco House — bière', category:'Alimentation', amount:'12,48$' },
     { type:'real', date:'2/8', time:'15:08', merchant:'The Met — entrée', category:'Musée', amount:'94,00$' },
-    { type:'budget', day:'2/8', label:'Dîner (moyenne restaurant/pique-nique/invité)', amount:'~50$' },
+    { type:'real', date:'2/8', time:'—', merchant:'Glaces (camion à glaces)', category:'Alimentation', amount:'17,38$' },
+    { type:'real', date:'2/8', time:'soir', merchant:'Restaurant Arva (invités par Théodore)', category:'Restaurant', amount:'Gratuit' },
+    { type:'real', date:'2/8', time:'—', merchant:'Boissons — Thep Thai Restaurant (1439 2nd Ave)', category:'Alimentation', amount:'37,00$' },
+    { type:'real', date:'2/8', time:'19:12', merchant:'Gristedes — chewing-gum', category:'Alimentation', amount:'2,71$' },
     { type:'budget', day:'3/8', label:'Radio Bakery', amount:'~50$' },
     { type:'budget', day:'3/8', label:'Brooklyn Museum (facultatif, suggéré)', amount:'~100$' },
     { type:'budget', day:'3/8', label:'Déjeuner — Little Egg', amount:'~90$' },
@@ -302,7 +305,7 @@ function renderHome(){
     <div class="stats">
       <div class="stat"><b>11</b>jours</div>
       <div class="stat"><b>5</b>voyageurs</div>
-      <div class="stat"><b>~2 685$</b>budget total</div>
+      <div class="stat"><b>${BUDGET.total}</b>budget total</div>
     </div>
   </div>
   <div class="linemap">
@@ -422,7 +425,8 @@ function renderReservations(){
 function renderBudget(){
   const detailRow = (item) => {
     if(item.type === 'real'){
-      return `<div class="brow2 real"><span><span class="realtag">RÉEL</span> <b style="color:var(--text-dim);font-weight:700;">${item.date} ${item.time}</b> &nbsp;${item.merchant} <span class="expcat">${item.category}</span></span><b>${item.amount}${item.excluded ? ' <span class="exclnote">(hors total, voir Métro)</span>' : ''}</b></div>`;
+      const exclNote = item.excluded ? (item.category === 'Métro' ? ' <span class="exclnote">(hors total, voir Métro)</span>' : ' <span class="exclnote">(prix à confirmer, non compté)</span>') : '';
+      return `<div class="brow2 real"><span><span class="realtag">RÉEL</span> <b style="color:var(--text-dim);font-weight:700;">${item.date} ${item.time}</b> &nbsp;${item.merchant} <span class="expcat">${item.category}</span></span><b>${item.amount}${exclNote}</b></div>`;
     }
     return `<div class="brow2"><span><b style="color:var(--text-dim);font-weight:700;">${item.day}</b> &nbsp;${item.label}</span><b>${item.amount}</b></div>`;
   };
@@ -439,7 +443,7 @@ function renderBudget(){
   <div class="budgetcard" style="margin-top:0;">
     <h2>Détail activités & restaurants</h2>
     ${BUDGET.detail.map(detailRow).join('')}
-    <div class="brow2 total"><span>Sous-total</span><b>~2 998$</b></div>
+    <div class="brow2 total"><span>Sous-total</span><b>~3 005$</b></div>
   </div>
   <div class="budgetcard" style="margin-top:0;">
     <h2>💳 Total dépenses réelles par catégorie</h2>
